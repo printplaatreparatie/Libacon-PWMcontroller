@@ -15,6 +15,8 @@ int calculateDither(int dither);           // update the dither value(this value
 #define PWM9123 4 // OUT1(U1,Q9)
 #define MA9190 1  // K2
 
+int ditherRange = 10; //dither range in percentage around the PWM dutycycle(so ditherRange = 10 & PWM = 50% => PWM = 45%-55%)
+
 unsigned long previousMicrosJoyL = 0;
 const long intervalJoyL = 500;
 

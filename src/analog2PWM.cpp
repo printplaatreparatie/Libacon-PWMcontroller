@@ -25,7 +25,7 @@ bool analog2PWM(int whichADC, int dither)
     else
     {
         analogValue = analogValue - minValue;
-        int dutycycle = ((analogValue * 100) / maxValue) + dither;
+        int dutycycle = (((analogValue * 100) / maxValue) + (ditherRange/2)- dither);
         delayToTurnOff = intervalPWM * (dutycycle / 100);
     }
 
