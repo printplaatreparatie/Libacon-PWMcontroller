@@ -14,37 +14,64 @@ void setup()
 
 void loop()
 {
-  unsigned long currentMillis = micros();
+  static int dither = 0;
+  static bool polarity9190 = 0;
+  static bool polarity45_46 = 0;
+  unsigned long currentMicros = micros();
 
-  if (currentMillis - previousMicrosPWM9123ON >= intervalPWM9123ON)
+  if (currentMicros - previousMicrosPWM9123ON >= intervalPWM)
   {
+    digitalWrite(PWM9123, HIGH);
+    if (polarity9190)
+    {
+      digitalWrite(MA9190, HIGH);
+    }
+    else
+    {
+      digitalWrite(MA9190, LOW);
+    }
   }
 
-  if (currentMillis - previousMicrosPWM9123ON >= intervalPWM9123OFF)
+  if (currentMicros - previousMicrosPWM9145_46ON >= intervalPWM)
   {
+    digitalWrite(PWM9145, HIGH);
+    digitalWrite(PWM9146, HIGH);
   }
 
-  if (currentMillis - previousMicrosPWM9145_46ON >= intervalPWM9145_46ON)
+  if (currentMicros - previousMicrosPWM9123ON >= intervalPWM9123OFF)
   {
+    digitalWrite(PWM9123, LOW);
   }
 
-  if (currentMillis - previousMicrosPWM9145_46ON >= intervalPWM9145_46OFF)
+  if (currentMicros - previousMicrosPWM9145_46ON >= intervalPWM9145_46OFF)
   {
+    if (polarity45_46)
+    {
+      digitalWrite(PWM9145, LOW);
+    }
+    else
+    {
+      digitalWrite(PWM9146, LOW);
+    }
   }
 
-  if (currentMillis - previousMicrosJoyL >= intervalJoyL)
+  if (currentMicros - previousMicrosDither >= intervalDither)
   {
+    dither = calculateDither(dither);
   }
 
-  if (currentMillis - previousMicrosDither >= intervalDither)
+  if (currentMicros - previousMicrosJoyL >= intervalJoyL)
   {
+    polarity45_46 = analog2PWM(joyL, dither);
   }
 
-  if (currentMillis - previousMicrosJoyR >= intervalJoyR)
+  if (currentMicros - previousMicrosJoyR >= intervalJoyR)
   {
+    polarity9190 = analog2PWM(joyR, dither);
   }
 
-  if (currentMillis - previousMicrosButton >= intervalButton)
+  if (currentMicros - previousMicrosButton >= intervalButton)
   {
+    Button();
   }
 }
