@@ -31,9 +31,9 @@ const long intervalPWM = 250;
 unsigned long previousMicrosPWM9123ON = 0;
 unsigned long previousMicrosPWM9145_46ON = 0;
 
-long intervalPWM9123OFF = intervalPWM;
+unsigned long intervalPWM9123OFF = intervalPWM;
 
-long intervalPWM9145_46OFF = intervalPWM;
+unsigned long intervalPWM9145_46OFF = intervalPWM;
 
 void setup()
 {
@@ -49,142 +49,142 @@ void setup()
 
 void loop()
 {
-  static int dither = 0;
-  static bool polarity9190 = 0;
-  static bool polarity45_46 = 0;
-  unsigned long currentMicros = micros();
+  // static int dither = 0;
+  // static bool polarity9190 = 0;
+  // static bool polarity45_46 = 0;
+  // unsigned long currentMicros = micros();
 
-  // digitalWrite(MA9136,LOW);
-  // digitalWrite(MA9190,LOW);
-  // digitalWrite(PWM9123,LOW);
-  // digitalWrite(PWM9145,LOW);
-  // digitalWrite(PWM9146,LOW);
-  // delay(1000);
-  // digitalWrite(MA9136,HIGH);
-  // digitalWrite(MA9190,HIGH);
-  // digitalWrite(PWM9123,HIGH);
-  // digitalWrite(PWM9145,HIGH);
-  // digitalWrite(PWM9146,HIGH);
-  // delay(1000);
-
-  if (currentMicros - previousMicrosPWM9123ON >= intervalPWM)
-  {
-    digitalWrite(PWM9123, HIGH);
-    if (polarity9190)
-    {
-      digitalWrite(MA9190, HIGH);
-    }
-    else
-    {
-      digitalWrite(MA9190, LOW);
-    }
-  }
-
-  if (currentMicros - previousMicrosPWM9145_46ON >= intervalPWM)
-  {
-    digitalWrite(PWM9145, HIGH);
-    digitalWrite(PWM9146, HIGH);
-  }
-
-  if (currentMicros - previousMicrosPWM9123ON >= intervalPWM9123OFF)
-  {
-    digitalWrite(PWM9123, LOW);
-  }
-
-  if (currentMicros - previousMicrosPWM9145_46ON >= intervalPWM9145_46OFF)
-  {
-    if (polarity45_46)
-    {
-      digitalWrite(PWM9145, LOW);
-    }
-    else
-    {
-      digitalWrite(PWM9146, LOW);
-    }
-  }
-
-  if (currentMicros - previousMicrosDither >= intervalDither)
-  {
-    dither = calculateDither(dither);
-  }
-
-  if (currentMicros - previousMicrosJoyL >= intervalJoyL)
-  {
-    polarity45_46 = analog2PWM(joyL, dither);
-  }
-
-  if (currentMicros - previousMicrosJoyR >= intervalJoyR)
-  {
-    polarity9190 = analog2PWM(joyR, dither);
-  }
-
-  if (currentMicros - previousMicrosButton >= intervalButton)
-  {
-    Button();
-  }
+  digitalWrite(MA9136,LOW);
+  digitalWrite(MA9190,LOW);
+  digitalWrite(PWM9123,LOW);
+  digitalWrite(PWM9145,LOW);
+  digitalWrite(PWM9146,LOW);
+  delay(1000);
+  digitalWrite(MA9136,HIGH);
+  digitalWrite(MA9190,HIGH);
+  digitalWrite(PWM9123,HIGH);
+  digitalWrite(PWM9145,HIGH);
+  digitalWrite(PWM9146,HIGH);
+  delay(1000);
 }
+//   if (currentMicros - previousMicrosPWM9123ON >= intervalPWM)
+//   {
+//     digitalWrite(PWM9123, HIGH);
+//     if (polarity9190)
+//     {
+//       digitalWrite(MA9190, HIGH);
+//     }
+//     else
+//     {
+//       digitalWrite(MA9190, LOW);
+//     }
+//   }
 
-int calculateDither(int dither){
-    if(dither<=ditherRange)
-    {
-        dither++;
-    }
-    return dither;
-}
+//   if (currentMicros - previousMicrosPWM9145_46ON >= intervalPWM)
+//   {
+//     digitalWrite(PWM9145, HIGH);
+//     digitalWrite(PWM9146, HIGH);
+//   }
 
-void Button(void)
-{
-    static bool MA9136State = false; // give the MA9136 the initial state of OFF
+//   if (currentMicros - previousMicrosPWM9123ON >= intervalPWM9123OFF)
+//   {
+//     digitalWrite(PWM9123, LOW);
+//   }
 
-    if (!(digitalRead(button))) // if the button is LOW(pushed)
-    {
-        MA9136State = !MA9136State;        // update the state to new value
-        digitalWrite(MA9136, MA9136State); // write the updated state to MA9136
-    }
-}
+//   if (currentMicros - previousMicrosPWM9145_46ON >= intervalPWM9145_46OFF)
+//   {
+//     if (polarity45_46)
+//     {
+//       digitalWrite(PWM9145, LOW);
+//     }
+//     else
+//     {
+//       digitalWrite(PWM9146, LOW);
+//     }
+//   }
 
-bool analog2PWM(int whichADC, int dither)
-{
-    const int error = 10;
-    const int maxValue = 512 - error;
-    const int minValue = 0 + error;
-    int delayToTurnOff = intervalPWM;
-    bool polarity = false;
-    int analogValue = analogRead(whichADC);
-    if (analogValue >= 512)
-    {
-        polarity = true;
-        analogValue = 512 - (analogValue - 512);
-    }
+//   if (currentMicros - previousMicrosDither >= intervalDither)
+//   {
+//     dither = calculateDither(dither);
+//   }
 
-    if (analogValue < minValue)
-    {
-        delayToTurnOff = 0;
-    }
-    else if (analogValue > maxValue)
-    {
-        delayToTurnOff = intervalPWM;
-    }
-    else
-    {
-        analogValue = analogValue - minValue;
-        int dutycycle = (((analogValue * 100) / maxValue) + (ditherRange/2)- dither);
-        delayToTurnOff = intervalPWM * (dutycycle / 100);
-    }
+//   if (currentMicros - previousMicrosJoyL >= intervalJoyL)
+//   {
+//     polarity45_46 = analog2PWM(joyL, dither);
+//   }
 
-    switch (whichADC)
-    {
-    case joyL:
-        intervalPWM9123OFF = delayToTurnOff;
-        break;
+//   if (currentMicros - previousMicrosJoyR >= intervalJoyR)
+//   {
+//     polarity9190 = analog2PWM(joyR, dither);
+//   }
 
-    case joyR:
-        intervalPWM9145_46OFF = delayToTurnOff;
-        break;
+//   if (currentMicros - previousMicrosButton >= intervalButton)
+//   {
+//     Button();
+//   }
+// }
 
-    default:
-        break;
-    }
+// int calculateDither(int dither){
+//     if(dither<=ditherRange)
+//     {
+//         dither++;
+//     }
+//     return dither;
+// }
 
-    return polarity;
-}
+// void Button(void)
+// {
+//     static bool MA9136State = false; // give the MA9136 the initial state of OFF
+
+//     if (!(digitalRead(button))) // if the button is LOW(pushed)
+//     {
+//         MA9136State = !MA9136State;        // update the state to new value
+//         digitalWrite(MA9136, MA9136State); // write the updated state to MA9136
+//     }
+// }
+
+// bool analog2PWM(int whichADC, int dither)
+// {
+//     const int error = 10;
+//     const int maxValue = 512 - error;
+//     const int minValue = 0 + error;
+//     int delayToTurnOff = intervalPWM;
+//     bool polarity = false;
+//     int analogValue = analogRead(whichADC);
+//     if (analogValue >= 512)
+//     {
+//         polarity = true;
+//         analogValue = 512 - (analogValue - 512);
+//     }
+
+//     if (analogValue < minValue)
+//     {
+//         delayToTurnOff = 0;
+//     }
+//     else if (analogValue > maxValue)
+//     {
+//         delayToTurnOff = intervalPWM;
+//     }
+//     else
+//     {
+//         analogValue = analogValue - minValue;
+//         int dutycycle = (((analogValue * 100) / maxValue) + (ditherRange/2)- dither);
+//         delayToTurnOff = intervalPWM * (dutycycle / 100);
+//     }
+
+//     switch (whichADC)
+//     {
+//     case joyL:
+//         intervalPWM9123OFF = delayToTurnOff;
+//         break;
+
+//     case joyR:
+//         intervalPWM9145_46OFF = delayToTurnOff;
+//         break;
+
+//     default:
+//         break;
+//     }
+
+//     return polarity;
+// }
