@@ -53,6 +53,8 @@ void loop()
   static bool polarity9190 = 0;
   static bool polarity45_46 = 0;
   unsigned long currentMicros = micros();
+  unsigned long previousMicros = 0;
+  unsigned long microsAlowwedToRunLoop = 1000;
 
   if (currentMicros - previousMicrosPWM9123ON >= intervalPWM)
   {
@@ -60,11 +62,11 @@ void loop()
     digitalWrite(PWM9123, HIGH);
     if (polarity9190)
     {
-      digitalWrite(MA9190, HIGH);
+      //digitalWrite(MA9190, HIGH);
     }
     else
     {
-      digitalWrite(MA9190, LOW);
+      //digitalWrite(MA9190, LOW);
     }
   }
 
@@ -111,6 +113,18 @@ void loop()
   {
     Button();
   }
+
+  previousMicros = micros();
+  if ((previousMicros - currentMicros) > microsAlowwedToRunLoop)
+  {
+    digitalWrite(MA9136, HIGH);
+    digitalWrite(MA9190, HIGH);
+  }
+  else
+  {
+    digitalWrite(MA9136, LOW);
+    digitalWrite(MA9190, LOW);
+  }
 }
 
 int calculateDither(int dither)
@@ -130,15 +144,15 @@ void Button(void)
   if (!(digitalRead(button))) // if the button is LOW(pushed)
   {
     loopsPassed++;
-    if (loopsPassed == 1) //debounce (if the button has been pressed for 2 loops(so 2*buttonInterval) the button is truly pressed)
+    if (loopsPassed == 1) // debounce (if the button has been pressed for 2 loops(so 2*buttonInterval) the button is truly pressed)
     {
       MA9136State = !MA9136State;
-      digitalWrite(MA9136, MA9136State);
+      //digitalWrite(MA9136, MA9136State);
     }
   }
   else
   {
-    loopsPassed = 0;  //if the button is not pressed reset the loop counter
+    loopsPassed = 0; // if the button is not pressed reset the loop counter
   }
 }
 
@@ -149,7 +163,7 @@ bool analog2PWM(int whichADC, int dither)
   const int minValue = 0 + error;
   int delayToTurnOff = intervalPWM;
   bool polarity = false;
-  dither = ditherRange/2;
+  dither = ditherRange / 2;
   int analogValue = analogRead(whichADC);
   if (analogValue >= 512)
   {
