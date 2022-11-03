@@ -54,7 +54,7 @@ void loop()
   static bool polarity45_46 = 0;
   unsigned long currentMicros = micros();
   unsigned long previousMicros = 0;
-  unsigned long microsAlowwedToRunLoop = 1000;
+  unsigned long microsAlowwedToRunLoop = 500;
 
   if (currentMicros - previousMicrosPWM9123ON >= intervalPWM)
   {
