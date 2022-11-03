@@ -56,6 +56,7 @@ void loop()
 
   if (currentMicros - previousMicrosPWM9123ON >= intervalPWM)
   {
+    previousMicrosPWM9123ON = currentMicros;
     digitalWrite(PWM9123, HIGH);
     if (polarity9190)
     {
@@ -69,6 +70,7 @@ void loop()
 
   if (currentMicros - previousMicrosPWM9145_46ON >= intervalPWM)
   {
+    previousMicrosPWM9145_46ON = currentMicros;
     digitalWrite(PWM9145, HIGH);
     digitalWrite(PWM9146, HIGH);
   }
