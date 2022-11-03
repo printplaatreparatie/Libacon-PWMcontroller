@@ -19,6 +19,19 @@ void loop()
   static bool polarity45_46 = 0;
   unsigned long currentMicros = micros();
 
+  // digitalWrite(MA9136,LOW);
+  // digitalWrite(MA9190,LOW);
+  // digitalWrite(PWM9123,LOW);
+  // digitalWrite(PWM9145,LOW);
+  // digitalWrite(PWM9146,LOW);
+  // delay(1000);
+  // digitalWrite(MA9136,HIGH);
+  // digitalWrite(MA9190,HIGH);
+  // digitalWrite(PWM9123,HIGH);
+  // digitalWrite(PWM9145,HIGH);
+  // digitalWrite(PWM9146,HIGH);
+  // delay(1000);
+
   if (currentMicros - previousMicrosPWM9123ON >= intervalPWM)
   {
     digitalWrite(PWM9123, HIGH);

@@ -5,4 +5,5 @@ int calculateDither(int dither){
     {
         dither++;
     }
+    return dither;
 }

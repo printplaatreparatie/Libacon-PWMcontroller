@@ -6,8 +6,8 @@ void Button(void);                         // read the button on the left joysti
 bool analog2PWM(int whichADC, int dither); // convert the analog value from the ADC's(the joysticks) to the correct PWM duty cycle
 int calculateDither(int dither);           // update the dither value(this value is added to the PWM dutycycle)
 
-#define joyL 10   // FX1056
-#define joyR 9    // FX1057
+#define joyL A2   // FX1056
+#define joyR A6    // FX1057
 #define button 3  // SW3604
 #define MA9136 0  // K1
 #define PWM9145 5 // OUT2(U4,Q2)

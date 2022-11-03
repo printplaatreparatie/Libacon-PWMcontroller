@@ -2,9 +2,9 @@
 
 bool analog2PWM(int whichADC, int dither)
 {
-    int error = 10;
-    int maxValue = 512 - error;
-    int minValue = 0 - error;
+    const int error = 10;
+    const int maxValue = 512 - error;
+    const int minValue = 0 + error;
     int delayToTurnOff = intervalPWM;
     bool polarity = false;
     int analogValue = analogRead(whichADC);
