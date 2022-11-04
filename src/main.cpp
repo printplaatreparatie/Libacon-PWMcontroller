@@ -13,7 +13,7 @@ int calculateDither(int dither);           // update the dither value(this value
 #define PWM9123 8 // OUT1(U1,Q9)
 #define MA9190 1  // K2
 
-int ditherRange = 20; // dither range in percentage around the PWM dutycycle(so ditherRange = 10 & PWM = 50% => PWM = 45%-55%)
+int ditherRange = 50; // dither range in percentage around the PWM dutycycle(so ditherRange = 10 & PWM = 50% => PWM = 45%-55%)
 int dutyCycle_4546 = 0;
 int dutyCycle_9123 = 0;
 
@@ -27,8 +27,9 @@ void setup()
   pinMode(PWM9123, OUTPUT);
   pinMode(PWM9145, OUTPUT);
   pinMode(PWM9146, OUTPUT);
+  pinMode(10, OUTPUT);
 
-	TCCR1A = _BV(COM1A1) | _BV(WGM10) | _BV(COM1B1);
+  TCCR1A = _BV(COM1A1) | _BV(WGM10) | _BV(COM1B1);
   TCCR1B = _BV(CS11) | _BV(WGM12);
 
   TCCR0A = _BV(COM0A1) | _BV(WGM00);
@@ -57,13 +58,18 @@ void loop()
   if (polarity45_46)
   {
     OCR1A = dutyCycle_4546;
-    //OCR1B = 255;
+    // OCR1B = 255;
   }
   else
   {
     OCR1B = dutyCycle_4546;
-    //OCR1A = 255;
+    // OCR1A = 255;
   }
+
+
+  static bool relayState = false;
+  digitalWrite(10,relayState);
+  relayState=!relayState;
 }
 
 int calculateDither(int dither)
@@ -80,11 +86,11 @@ int calculateDither(int dither)
 
   if (increase)
   {
-    dither++;
+    dither = dither + 5;                  //dither in steps of 5 because dither freq= loopFreq/(ditherRange/steps) //loopFreq=1.3KHz ditherRange=50
   }
   else
   {
-    dither--;
+    dither = dither - 5;
   }
   return dither;
 }
@@ -135,13 +141,15 @@ bool analog2PWM(int whichADC, int dither)
   }
   else
   {
-      dutyCycle = (((analogValue-minValue)*maxPWM)/(maxValue-minValue));
-
-  //   // analogValue = analogValue - minValue;
-  //   // double dutycyclePercentage = ((analogValue * 100) / 512); //(maxValue - minValue));
-  //   // dutyCycle = ((dutycyclePercentage * maxPWM) / 100);
-
-  //   //+ (ditherRange / 2) - dither)
+    dutyCycle = ((((analogValue - minValue) * maxPWM) / (maxValue - minValue))) + ((ditherRange / 2) - dither);
+    if (dutyCycle > 255)
+    {
+      dutyCycle = 255;
+    }
+    if (dutyCycle < 0)
+    {
+      dutyCycle = 0;
+    }
   }
   switch (whichADC)
   {
