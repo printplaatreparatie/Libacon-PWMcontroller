@@ -5,7 +5,7 @@ bool analog2PWM(int whichADC, int dither); // convert the analog value from the 
 int calculateDither(int dither);           // update the dither value(this value is added to the PWM dutycycle)
 
 #define joyL A2   // FX1056
-#define joyR A6   // FX1057
+#define joyR A7   // FX1057
 #define button 3  // SW3604
 #define MA9136 0  // K1
 #define PWM9145 5 // OUT2(U4,Q2)
@@ -58,17 +58,17 @@ void loop()
   if (polarity45_46)
   {
     OCR1A = dutyCycle_4546;
-    // OCR1B = 255;
+    OCR1B = 255;
   }
   else
   {
     OCR1B = dutyCycle_4546;
-    // OCR1A = 255;
+    OCR1A = 255;
   }
 
-  static bool relayState = false;
-  digitalWrite(10, relayState);
-  relayState = !relayState;
+  // static bool relayState = false;
+  // digitalWrite(10, relayState);
+  // relayState = !relayState;
 }
 
 int calculateDither(int dither)
