@@ -13,7 +13,7 @@ int calculateDither(int dither);           // update the dither value(this value
 #define PWM9123 8 // OUT1(U1,Q9)
 #define MA9190 1  // K2
 
-int ditherRange = 50; // dither range in percentage around the PWM dutycycle(so ditherRange = 10 & PWM = 50% => PWM = 45%-55%)
+int ditherRange = 50; // dither range around the PWM dutycycle(so ditherRange = 10 & PWM = 50 => PWM = 45-55)
 int dutyCycle_4546 = 0;
 int dutyCycle_9123 = 0;
 
@@ -66,10 +66,9 @@ void loop()
     // OCR1A = 255;
   }
 
-
   static bool relayState = false;
-  digitalWrite(10,relayState);
-  relayState=!relayState;
+  digitalWrite(10, relayState);
+  relayState = !relayState;
 }
 
 int calculateDither(int dither)
@@ -86,7 +85,7 @@ int calculateDither(int dither)
 
   if (increase)
   {
-    dither = dither + 5;                  //dither in steps of 5 because dither freq= loopFreq/(ditherRange/steps) //loopFreq=1.3KHz ditherRange=50
+    dither = dither + 5; // dither in steps of 5 because dither freq= loopFreq/(ditherRange/steps) //loopFreq=1.3KHz ditherRange=50
   }
   else
   {
@@ -99,19 +98,21 @@ void Button(void)
 {
   static bool MA9136State = false; // give the MA9136 the initial state of OFF
   static int loopsPassed = 0;      // count how many times this function is called while the button is still being pressed
-
-  if (!(digitalRead(button))) // if the button is LOW(pushed)
+  if (!MA9136State)
   {
-    loopsPassed++;
-    if (loopsPassed == 10) // debounce (if the button has been pressed for n loops(the button is truly pressed)
+    if (!(digitalRead(button))) // if the button is LOW(pushed)
     {
-      MA9136State = !MA9136State;
-      digitalWrite(MA9136, MA9136State);
+      loopsPassed++;
+      if (loopsPassed == 10) // debounce (if the button has been pressed for n loops(the button is truly pressed)
+      {
+        MA9136State = true;
+        digitalWrite(MA9136, MA9136State);
+      }
     }
-  }
-  else
-  {
-    loopsPassed = 0; // if the button is not pressed reset the loop counter
+    else
+    {
+      loopsPassed = 0; // if the button is not pressed reset the loop counter
+    }
   }
 }
 
