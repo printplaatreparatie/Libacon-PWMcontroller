@@ -28,11 +28,11 @@ void setup()
   pinMode(PWM9145, OUTPUT);
   pinMode(PWM9146, OUTPUT);
 
-  TCCR1A = _BV(COM1A1) | _BV(WGM10) | _BV(COM1B1); //set PWM outputs from clock1(PWM9145&9146) in fast PWM mode
-  TCCR1B = _BV(CS11) | _BV(WGM12);                 //and set clock prescaler zo that PWM freq= around 2KHz closest = 3.8KHz
+  TCCR1A = _BV(COM1A1) | _BV(WGM10) | _BV(COM1B1); // set PWM outputs from clock1(PWM9145&9146) in fast PWM mode
+  TCCR1B = _BV(CS11) | _BV(WGM12);                 // and set clock prescaler zo that PWM freq= around 2KHz closest = 3.8KHz
 
-  TCCR0A = _BV(COM0A1) | _BV(WGM00);               //do the same but for clock0 but only for outputA(PWM9123);
-  TCCR0B = _BV(CS01);                              //this clock frequency is different therefore PWMfreq = 1.9KHz
+  TCCR0A = _BV(COM0A1) | _BV(WGM00); // do the same but for clock0 but only for outputA(PWM9123);
+  TCCR0B = _BV(CS01);                // this clock frequency is different therefore PWMfreq = 1.9KHz
 }
 
 void loop()
@@ -42,8 +42,8 @@ void loop()
   static bool polarity45_46 = 0;
   Button();
   dither = calculateDither(dither);
-  polarity9190 = analog2PWM(joyL, dither);
-  polarity45_46 = analog2PWM(joyR, dither);
+  polarity45_46 = analog2PWM(joyL, dither);
+  polarity9190 = analog2PWM(joyR, dither);
 
   OCR0A = dutyCycle_9123;
   if (polarity9190)
@@ -66,7 +66,7 @@ void loop()
   }
 }
 
-int calculateDither(int dither)  //ads a triangle waveform to the dutycycle so the valves dont stick when position doesnt change
+int calculateDither(int dither) // ads a triangle waveform to the dutycycle so the valves dont stick when position doesnt change
 {
   static bool increase = true;
   if (dither >= ditherRange)
@@ -111,10 +111,10 @@ void Button(void)
   }
 }
 
-bool analog2PWM(int whichADC, int dither)  //for more clarity see pictures on trello(libacon volvo)
+bool analog2PWM(int whichADC, int dither) // for more clarity see pictures on trello(libacon volvo)
 {
-  const long maxValue = 511 - 15; //the joystick doesnt always rest in the same mid position so this is to create a deadzone in which the ADC value is ignored and PWM255 is written
-  const long minValue = 0 + 165;  //when the joysticj is fully turned to one side it outputs 0.7V or 4.3 so another deadzone of 0.7V/0.00488V
+  const long maxValue = 511 - 15; // the joystick doesnt always rest in the same mid position so this is to create a deadzone in which the ADC value is ignored and PWM255 is written
+  const long minValue = 0 + 165;  // when the joysticj is fully turned to one side it outputs 0.7V or 4.3 so another deadzone of 0.7V/0.00488V
   const long maxPWM = 255;
   const long minPWM = 0;
   long dutyCycle = 0;
@@ -124,23 +124,23 @@ bool analog2PWM(int whichADC, int dither)  //for more clarity see pictures on tr
   if (analogValue >= 512)
   {
     polarity = true;
-    analogValue = 511 - (analogValue - 512); //map the value so that instead of 0-1023 it goes from 0-512-0
+    analogValue = 511 - (analogValue - 512); // map the value so that instead of 0-1023 it goes from 0-512-0
   }
 
-  if (analogValue < minValue) //ignore the deadzone and just write minPWM
+  if (analogValue < minValue) // ignore the deadzone and just write minPWM
   {
     dutyCycle = minPWM;
   }
-  else if (analogValue > maxValue) //ignore the deadzone and just write maxPWM
+  else if (analogValue > maxValue) // ignore the deadzone and just write maxPWM
   {
     dutyCycle = maxPWM;
   }
-  else//now the ADCvalue is filtered so that it only can be 165(minvalue)-496(maxvalue)
+  else // now the ADCvalue is filtered so that it only can be 165(minvalue)-496(maxvalue)
   {
-    //the next formula maps the value 165-496 to a PWM value of 0-255
-    //dutycycle = (value/totalvalue*maxPWM)+dithervalue
+    // the next formula maps the value 165-496 to a PWM value of 0-255
+    // dutycycle = (value/totalvalue*maxPWM)+dithervalue
     dutyCycle = ((((analogValue - minValue) * maxPWM) / (maxValue - minValue))) + ((ditherRange / 2) - dither);
-    //because dither gets added and substracted after the value can get out of limit and overflow so check if that happens and limit the value
+    // because dither gets added and substracted after the value can get out of limit and overflow so check if that happens and limit the value
     if (dutyCycle > 255)
     {
       dutyCycle = 255;
@@ -153,10 +153,10 @@ bool analog2PWM(int whichADC, int dither)  //for more clarity see pictures on tr
   switch (whichADC)
   {
   case joyL:
-    dutyCycle_9123 = dutyCycle;
+    dutyCycle_4546 = dutyCycle;
     break;
   case joyR:
-    dutyCycle_4546 = dutyCycle;
+    dutyCycle_9123 = dutyCycle;
     break;
   default:
     break;
