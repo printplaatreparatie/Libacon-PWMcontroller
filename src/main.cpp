@@ -93,21 +93,18 @@ void Button(void)
 {
   static bool MA9136State = false; // give the MA9136 the initial state of OFF
   static int loopsPassed = 0;      // stores how many times this function is called while the button is still being pressed
-  if (!MA9136State)
+  if (!(digitalRead(button)))      // if the button is LOW(pushed)
   {
-    if (!(digitalRead(button))) // if the button is LOW(pushed)
+    loopsPassed++;
+    if (loopsPassed == 10) // debounce (if the button has been pressed for n loops(the button is truly pressed)
     {
-      loopsPassed++;
-      if (loopsPassed == 10) // debounce (if the button has been pressed for n loops(the button is truly pressed)
-      {
-        MA9136State = !MA9136State;
-        digitalWrite(MA9136, MA9136State);
-      }
+      MA9136State = !MA9136State;
+      digitalWrite(MA9136, MA9136State);
     }
-    else
-    {
-      loopsPassed = 0; // if the button is not pressed reset the loop counter
-    }
+  }
+  else
+  {
+    loopsPassed = 0; // if the button is not pressed reset the loop counter
   }
 }
 
