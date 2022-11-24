@@ -100,7 +100,7 @@ void Button(void)
       loopsPassed++;
       if (loopsPassed == 10) // debounce (if the button has been pressed for n loops(the button is truly pressed)
       {
-        MA9136State = true;
+        MA9136State = !MA9136State;
         digitalWrite(MA9136, MA9136State);
       }
     }
@@ -137,7 +137,7 @@ bool analog2PWM(int whichADC, int dither) // for more clarity see pictures on tr
   }
   else // now the ADCvalue is filtered so that it only can be 165(minvalue)-496(maxvalue)
   {
-    // the next formula maps the value 165-496 to a PWM value of 0-255
+    // the following formula maps the value 165-496 to a PWM value of 0-255
     // dutycycle = (value/totalvalue*maxPWM)+dithervalue
     dutyCycle = ((((analogValue - minValue) * maxPWM) / (maxValue - minValue))) + ((ditherRange / 2) - dither);
     // because dither gets added and substracted after the value can get out of limit and overflow so check if that happens and limit the value
